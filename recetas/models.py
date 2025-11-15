@@ -8,7 +8,7 @@ class Receta(models.Model):
     nombre = models.CharField(max_length=100, null=False)
     slug = AutoSlugField(populate_from='nombre', unique=True)
     tiempo = models.CharField(max_length=100, null=True)
-    foto = models.CharField(max_length=100, null=False)
+    foto = models.CharField(max_length=100, null=True)
     descripcion = models.TextField()
     fecha = models.DateTimeField(auto_now=True)
 

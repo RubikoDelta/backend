@@ -20,13 +20,6 @@ class RecetaSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("La categoría no existe.")
         return value
 
-    def validate_foto(self, value):
-        ext = os.path.splitext(value.name)[1].lower()
-        if ext not in ['.jpg', '.jpeg', '.png', '.gif']:
-            raise serializers.ValidationError(
-                "El archivo debe ser una imagen válida.")
-        return value
-
     class Meta:
         model = Receta
         fields = ("id", "nombre", "slug", "tiempo", "descripcion",

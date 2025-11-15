@@ -25,6 +25,11 @@ class Clase1(APIView):
 
             foto = f"{datetime.timestamp(datetime.now())}{os.path.splitext(str(request.FILES['foto']))[1]}"
             fs = FileSystemStorage()
+
+            allowed_types = ["image/jpeg", "image/png"]
+            if request.FILES['foto'].content_type not in allowed_types:
+                return JsonResponse({"foto": ["El archivo debe ser una imagen JPG o PNG."]}, status=400)
+
             try:
                 fs.save(f"recetas/{foto}", request.FILES['foto'])
                 fs.url(request.FILES['foto'])
@@ -53,3 +58,24 @@ class Clase2(APIView):
                                           "foto": foto_path}}, status=HTTPStatus.OK)
         except Receta.DoesNotExist:
             return JsonResponse({"Estado": "Error", "Mensaje": "Recurso no disponible"}, status=HTTPStatus.NOT_FOUND)
+
+    def put(self, request, id):
+        try:
+            registro = Receta.objects.filter(pk=id).get()
+        except Receta.DoesNotExist:
+            return JsonResponse({"estado": "Error", "Mensaje": "Recurso no disponible"}, status=HTTPStatus.NOT_FOUND)
+        recetaSerializer = RecetaSerializer(
+            registro, data=request.data, partial=True)
+        recetaSerializer.is_valid(raise_exception=True)
+        recetaSerializer.save()
+        return JsonResponse({"Estado": "Registro Editado Exitosamente"}, status=HTTPStatus.CREATED)
+
+    def delete(self, request, id):
+        try:
+            data = Receta.objects.filter(pk=id).get()
+        except:
+            return JsonResponse({"Mensaje": "Registro no encontrado"}, status=HTTPStatus.NOT_FOUND)
+
+        os.remove(f"./uploads/recetas/{data.foto}")
+        Receta.objects.filter(pk=id).delete()
+        return JsonResponse({"Estado": "OK", "Respuesta": "Registro eliminado correctamente"}, status=HTTPStatus.OK)
