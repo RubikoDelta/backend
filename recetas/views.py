@@ -9,6 +9,7 @@ from .models import Receta
 from django.utils.dateformat import DateFormat
 from django.core.files.storage import FileSystemStorage
 import os
+from seguridad.decorators import logueado
 # Create your views here.
 
 
@@ -18,6 +19,7 @@ class Clase1(APIView):
         dato_json = RecetaSerializer(data, many=True)
         return JsonResponse({"data": dato_json.data})
 
+    @logueado()
     def post(self, request):
         try:
             recetaSerializer = RecetaSerializer(data=request.data)
@@ -59,6 +61,7 @@ class Clase2(APIView):
         except Receta.DoesNotExist:
             return JsonResponse({"Estado": "Error", "Mensaje": "Recurso no disponible"}, status=HTTPStatus.NOT_FOUND)
 
+    @logueado()
     def put(self, request, id):
         try:
             registro = Receta.objects.filter(pk=id).get()
@@ -70,6 +73,7 @@ class Clase2(APIView):
         recetaSerializer.save()
         return JsonResponse({"Estado": "Registro Editado Exitosamente"}, status=HTTPStatus.CREATED)
 
+    @logueado()
     def delete(self, request, id):
         try:
             data = Receta.objects.filter(pk=id).get()
