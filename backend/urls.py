@@ -27,6 +27,7 @@ urlpatterns = [
     path('api/v1/', include('recetas.urls')),
     path('api/v1/', include('contacto.urls')),
     path('api/v1/', include('seguridad.urls')),
+    path('api/v1/', include('recetas_helper.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

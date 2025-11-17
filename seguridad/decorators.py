@@ -15,7 +15,7 @@ def logueado():
             if not req.headers.get('Authorization') or req.headers.get('Authorization') == None:
                 return JsonResponse({'Estado': 'Error', 'Mensaje': 'Sin autorizacion'}, status=HTTPStatus.UNAUTHORIZED)
 
-            header = req.headers.get('Authorization').split("")
+            header = req.headers.get('Authorization').split(" ")
             try:
                 resuelto = jwt.decode(
                     header[1], settings.SECRET_KEY, algorithms=['HS512'])
@@ -25,7 +25,8 @@ def logueado():
 
             if int(resuelto['exp']) > int(time.time()):
                 return func(request, *args, **kwargs)
-
+            else:
+                return JsonResponse({'Estado': 'Error', 'Mensaje': 'No autorizado'}, status=HTTPStatus.UNAUTHORIZED)
             return func(request, *args, **kwargs)
         return _decorator
     return metodo

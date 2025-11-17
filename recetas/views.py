@@ -10,6 +10,8 @@ from django.utils.dateformat import DateFormat
 from django.core.files.storage import FileSystemStorage
 import os
 from seguridad.decorators import logueado
+from jose import jwt
+from django.conf import settings
 # Create your views here.
 
 
@@ -38,8 +40,15 @@ class Clase1(APIView):
             except Exception as e:
                 return JsonResponse({"Estado": "Error", "Mensaje": "Se produjo un error al intentar subir la foto"}, status=HTTPStatus.BAD_REQUEST)
 
-            Receta.objects.create(nombre=request.data['nombre'], tiempo=request.data['tiempo'], descripcion=request.data['descripcion'],
-                                  categoria_id=request.data['categoria_id'], foto=foto)
+            header = request.headers.get('Authorization').split(' ')
+            resuelto = jwt.decode(
+                header[1], settings.SECRET_KEY, algorithms=['HS512'])
+
+            try:
+                Receta.objects.create(nombre=request.data['nombre'], tiempo=request.data['tiempo'], descripcion=request.data['descripcion'],
+                                      categoria_id=request.data['categoria_id'], foto=foto, user_id=resuelto['id'])
+            except Exception as e:
+                raise Http404
 
             return JsonResponse({"estado": "ok", "mensaje": "Se crea el registro exitosamente"})
         except Exception as e:
