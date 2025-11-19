@@ -66,7 +66,7 @@ class Clase2(APIView):
             return JsonResponse({"data": {"id": data.id, "nombre": data.nombre, "slug": data.slug,
                                           "tiempo": data.tiempo, "descripcion": data.descripcion, "fecha": fecha,
                                           "categoria_id": data.categoria_id, "categoria": categoria_nombre,
-                                          "foto": foto_path}}, status=HTTPStatus.OK)
+                                          "foto": foto_path, "user_id": data.user_id, "user": data.user.first_name}}, status=HTTPStatus.OK)
         except Receta.DoesNotExist:
             return JsonResponse({"Estado": "Error", "Mensaje": "Recurso no disponible"}, status=HTTPStatus.NOT_FOUND)
 

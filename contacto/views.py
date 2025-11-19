@@ -6,9 +6,30 @@ from http import HTTPStatus
 from .serializer import ContactoSerializer
 from utils import utils
 
+# swagger
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 
 class Contacto(APIView):
 
+    @swagger_auto_schema(
+        operation_description="Endpoint para Contacto",
+        responses={
+            200: "Success",
+            400: "Bad Request"
+        },
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'nombre': openapi.Schema(type=openapi.TYPE_STRING, description="Nombre "),
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description="E-mail"),
+                'telefono': openapi.Schema(type=openapi.TYPE_STRING, description="Telefono"),
+                'mensaje': openapi.Schema(type=openapi.TYPE_STRING, description="Mensaje"),
+            },
+            required=['nombre', 'correo', 'telefono', 'mensaje']
+        )
+    )
     def post(self, request):
         try:
             contactoSerializer = ContactoSerializer(data=request.data)

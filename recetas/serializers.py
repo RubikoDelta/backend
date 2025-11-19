@@ -14,6 +14,7 @@ class RecetaSerializer(serializers.ModelSerializer):
     foto = serializers.FileField(required=True)
     foto_url = serializers.SerializerMethodField(read_only=True)
     categoria_id = serializers.IntegerField()
+    user = serializers.ReadOnlyField(source='user.first_name')
 
     def validate_categoria_id(self, value):
         if not Categoria.objects.filter(pk=value).exists():
@@ -23,7 +24,7 @@ class RecetaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Receta
         fields = ("id", "nombre", "slug", "tiempo", "descripcion",
-                  "fecha", "categoria", "categoria_id", "foto", "foto_url")
+                  "fecha", "categoria", "categoria_id", "foto", "foto_url", "user_id", "user")
 
     def get_foto_url(self, obj):
         return f"{os.getenv('BASE_URL')}uploads/recetas/{obj.foto}"
